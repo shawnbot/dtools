@@ -1,0 +1,20 @@
+{
+  "name": "dtools",
+  "version": "0.0.1",
+  "description": "data tools",
+  "main": "index.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": "",
+  "keywords": [
+    "data"
+  ],
+  "author": "Shawn Allen <shawn@alterior.net>",
+  "license": "BSD",
+  "dependencies": {
+    "simple-statistics": "~0.5.0",
+    "properly": "~0.2.0",
+    "minimist": "0.0.5"
+  }
+}
