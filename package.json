@@ -6,7 +6,10 @@
   "scripts": {
     "test": "make test"
   },
-  "repository": "",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/shawnbot/dtools.git"
+  },
   "keywords": [
     "data"
   ],
