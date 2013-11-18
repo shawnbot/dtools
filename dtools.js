@@ -1,7 +1,7 @@
 (function() {
 
   var dtools = {
-    version: "0.2.0"
+    version: "0.3.0"
   };
 
   // TODO: use browserify to build the browser bundle?
