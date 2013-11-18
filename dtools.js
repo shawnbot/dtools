@@ -111,6 +111,12 @@
   // alias all simple-statistics methods to the dtools namespace
   dtools.extend(dtools, ss);
 
+  // rename median -> middle
+  dtools.middle = dtools.rename(dtools.median, "middle");
+
+  // rename median_absolute_deviation -> median
+  dtools.median = dtools.rename(dtools.median_absolute_deviation, "median");
+
   // the identity function returns its first argument
   dtools.identity = function identity(d) {
     return d;
