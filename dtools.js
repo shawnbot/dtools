@@ -151,11 +151,19 @@
     return entries;
   };
 
+  // like Python's dict(), but it works with either:
+  // 1. an array of 2-element arrays: [[key, value], ...] or
+  // 2. an array of objects: [{key: "foo", value: 1}, ...]
   dtools.dict = function dict(entries) {
     var dict = {};
-    entries.forEach(function(d) {
-      dict[d.key] = d.value;
-    });
+    for (var i = 0, len = entries.length; i < len; i++) {
+      var d = entries[i];
+      if (Array.isArray(d)) {
+        dict[d[0]] = d[1];
+      } else {
+        dict[d.key] = d.value;
+      }
+    }
     return dict;
   };
 
