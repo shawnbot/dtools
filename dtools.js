@@ -139,7 +139,7 @@
 
   dtools.values = function values(d) {
     var values = [];
-    for (var k in d) keys.push(d[k]);
+    for (var k in d) values.push(d[k]);
     return values;
   };
 
