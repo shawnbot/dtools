@@ -197,12 +197,14 @@
             g = {};
         items.forEach(function(v, j) {
           var k = prop.call(this, v, j);
-          if (i < props.length - 1) {
-            v = subgroup(v, i + 1);
-          }
           if (k in g) g[k].push(v);
           else g[k] = [v];
         });
+        if (i < props.length - 1) {
+          for (var k in g) {
+            g[k] = subgroup(g[k], i + 1);
+          }
+        }
         if (rollup) {
           for (var k in g) {
             g[k] = rollup(g[k]);
