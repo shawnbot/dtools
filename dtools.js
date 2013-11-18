@@ -249,11 +249,16 @@
       return dtools.rename(prop, name);
     } else {
       var property = dtools.property.getter(prop, name);
-      property.get = property; // alias to propety.get()
+      property.get = property;
+      property.set = dtools.property.setter(prop);
       property.setter = function(value) {
         return dtools.property.setter(prop, value);
       };
-      property.set = dtools.property.setter(prop);
+      // dtools.property("foo").as("bar") is the equivalent of
+      // dtools.property("foo", "bar")
+      property.as = function(name) {
+        return dtools.alias(property, name);
+      };
       return property;
     }
   };
