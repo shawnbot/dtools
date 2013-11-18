@@ -23,6 +23,7 @@ var summarize = dtools.summarize()
       .props(["foo", "bar"])
       .stats(["min", "max", "mean", "median"]),
     summary = summarize(data);
+console.log("summary:", summary);
 console.log("average foo:", summary.foo.mean);
 console.log("max bar:", summary.bar.max);
 
