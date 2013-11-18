@@ -263,6 +263,17 @@
     }
   };
 
+  // dtools.property.get("foo.bar", {foo: {bar: 6}}) -> 6
+  dtools.property.get = function(prop, d) {
+    return dtools.property(prop).call(this, d);
+  };
+
+  // dtools.property.set("foo.bar", {foo: {bar: 6}}, 4) -> {foo: {bar: 4}}
+  dtools.property.set = function(prop, d, value) {
+    dtools.property(prop).set(d, value);
+    return d;
+  };
+
   // shorthand for:
   // list.map(function(prop) {
   //   return dtools.property(prop);
