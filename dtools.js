@@ -701,8 +701,50 @@
       forEach.apply(this, arguments);
       return this;
     };
+  };
 
-    return dtools;
+  dtools.improveFunctionMethods = function() {
+    var functionPrototype = Function.prototype;
+
+    functionPrototype.as = function as(name) {
+      return dtools.name(this) === name
+        ? this
+        : dtools.alias(this, name);
+    };
+
+    functionPrototype.not = function not() {
+      return dtools.rename(dtools.not(this), dtools.name(this));
+    };
+
+    functionPrototype.or = function or(fn) {
+      var tests = [this].concat(arguments);
+      return dtools.or(tests);
+    };
+
+    functionPrototype.and = function and(fn) {
+      var tests = [this].concat(arguments);
+      return dtools.and(tests);
+    };
+  };
+
+  dtools.improveObjectMethods = function() {
+    var objectPrototype = Object.prototype;
+
+    objectPrototype.copy = function(deep) {
+      return dtools.copy(this, deep);
+    };
+
+    objectPrototype.keys = function() {
+      return dtools.keys(this);
+    };
+
+    objectPrototype.values = function() {
+      return dtools.values(this);
+    };
+
+    objectPrototype.entries = function() {
+      return dtools.entries(this);
+    };
   };
 
   function dt_parsePropertyNames(prop) {
