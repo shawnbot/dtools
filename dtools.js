@@ -137,6 +137,12 @@
 
   dtools.keys = Object.keys;
 
+  dtools.values = function values(d) {
+    var values = [];
+    for (var k in d) keys.push(d[k]);
+    return values;
+  };
+
   dtools.entries = function entries(d) {
     var entries = [];
     for (var k in d) {
