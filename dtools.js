@@ -406,6 +406,15 @@
     return dtools.rename(stat, name);
   };
 
+  /*
+   * dtools.template(template)
+   * returns a function that replaces placeholders in the provided `template`
+   * string delineated by `{property}` with the named properties from the first
+   * argument. E.g.:
+   *
+   * var template = dtools.template("foo is '{foo}'");
+   * template({foo: "bar"}) -> "foo is 'bar'"
+   */
   dtools.template = function(tmpl) {
     var props = {};
     return function template(d) {
@@ -418,6 +427,74 @@
         }
       });
     };
+  };
+
+  /*
+   * functional composition
+   */
+
+  /*
+   * dtools.not(fn)
+   * returns a function that returns false if `fn` evaluates to a truthy value
+   * with the provided arguments. E.g.:
+   *
+   * var foo = function(d) { return d.foo === true; },
+   *     notFoo = dtools.not(foo); 
+   * foo({foo: true}) // true
+   * foo({foo: false}) // false
+   * notFoo({foo: true}) // false
+   * notFoo({foo: false}) // true
+   */
+  dtools.not = function(test, name) {
+    return dtools.rename(function not() {
+      return !test.apply(this, arguments);
+    }, name || dtools.name(test));
+  };
+
+  /*
+   * dtools.and(tests)
+   * dtools.and(test [, test2 [, ...]])
+   * returns a function that evaluates to true iff all test functions evaluate
+   * to a truthy value for the given arguments.
+   */
+  dtools.and = function(tests) {
+    if (typeof tests === "function") {
+      tests = dtools.slice(arguments);
+    }
+    var len = tests.length;
+    return function and() {
+      for (var i = 0; i < len; i++) {
+        if (!tests[i].apply(this, arguments)) return false;
+      }
+      return true;
+    };
+  };
+
+  /*
+   * dtools.or(tests)
+   * dtools.or(test [, test2 [, ...]])
+   * returns a function that evaluates to true any of the test functions
+   * evaluates to a truthy value for the given arguments.
+   */
+  dtools.or = function(tests) {
+    if (typeof tests === "function") {
+      tests = dtools.slice(arguments);
+    }
+    var len = tests.length;
+    return function or() {
+      for (var i = 0; i < len; i++) {
+        if (tests[i].apply(this, arguments)) return true;
+      }
+      return false;
+    };
+  };
+
+  dtools.defined = function defined(d) {
+    return d !== null && typeof d !== "undefined";
+  };
+
+  dtools.undef = function defined(d) {
+    return d === null || typeof d === "undefined";
   };
 
   ["slice", "filter", "map", "reduce"].forEach(function(method) {
