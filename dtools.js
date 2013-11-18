@@ -263,6 +263,14 @@
     }
   };
 
+  // shorthand for:
+  // list.map(function(prop) {
+  //   return dtools.property(prop);
+  // });
+  dtools.property.map = function propertyMap(prop, i) {
+    return dtools.property(prop);
+  };
+
   // dtools.prop is shorthand for dtools.property
   dtools.prop = dtools.property;
 
@@ -503,6 +511,10 @@
         throw "Unrecognized statistic type: " + stat;
     }
     return dtools.rename(stat, name);
+  };
+
+  dtools.stat.map = function statMap(stat, i) {
+    return dtools.stat(stat);
   };
 
   /*
