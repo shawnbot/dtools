@@ -364,10 +364,10 @@
               return d[prop] = v;
             };
 
-    if (typeof value !== "undefined") {
+    if (arguments.length > 1) {
       value = dtools.functor(value);
       return dtools.rename(function(d) {
-        return set(d, value.call(this, d));
+        return setter(d, value.call(this, d));
       }, prop);
     }
     return dtools.rename(setter, prop);
