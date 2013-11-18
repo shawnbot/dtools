@@ -1,7 +1,7 @@
 (function() {
 
   var dtools = {
-    version: "0.3.3"
+    version: "0.3.4"
   };
 
   // TODO: use browserify to build the browser bundle?
@@ -593,6 +593,24 @@
   /*
    * functional composition
    */
+
+  /*
+   * dtools.compose(inner, outer [, outer [...]])
+   * returns a function that processes data with multiple functions in the
+   * order specificed. E.g.:
+   *
+   * dtools.compose(dtools.property("foo"), dtools.length)({foo: "bar"}) -> 3
+   */
+  dtools.compose = function(inner, outer) {
+    var f0 = inner,
+        fns = dtools.slice(arguments, 1),
+        len = fns.length;
+    return function(d) {
+      d = f0(d);
+      for (var i = 0; i < len; i++) d = fns[i](d);
+      return d;
+    };
+  };
 
   /*
    * dtools.not(fn)
