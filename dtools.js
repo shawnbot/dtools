@@ -608,6 +608,16 @@
     return d === null || typeof d === "undefined";
   };
 
+  dtools.first = function(d) {
+    if (d.length) return d[0];
+    else if (typeof d === "object") {
+      for (var key in d) {
+        return d[key];
+      }
+    }
+    return d;
+  };
+
   ["slice", "filter", "map", "reduce"].forEach(function(method) {
     var array = [],
         slice = array.slice;
