@@ -135,6 +135,94 @@
     };
   };
 
+  dtools.keys = Object.keys;
+
+  dtools.entries = function entries(d) {
+    var entries = [];
+    for (var k in d) {
+      entries.push({key: k, value: d[k]});
+    }
+    return entries;
+  };
+
+  dtools.dict = function dict(entries) {
+    var dict = {};
+    entries.forEach(function(d) {
+      dict[d.key] = d.value;
+    });
+    return dict;
+  };
+
+  dtools.unique = function unique(d) {
+    var values = [];
+    d.forEach(function(v) {
+      if (values.indexOf(v) === -1) {
+        values.push(v);
+      }
+    });
+    return values;
+  };
+
+  dtools.extent = function extent(d) {
+    var min = d[0],
+        max = d[0];
+    for (var i = 1, len = d.length; i < len; i++) {
+      if (d[i] < min) min = d[i];
+      if (d[i] > max) max = d[i];
+    }
+    return [min, max];
+  };
+
+  dtools.group = function() {
+    var props = [],
+        rollup;
+
+    function group(d) {
+      function subgroup(items, i) {
+        var prop = props[i],
+            g = {};
+        items.forEach(function(v, j) {
+          var k = prop.call(this, v, j);
+          if (i < props.length - 1) {
+            v = subgroup(v, i + 1);
+          }
+          if (k in g) g[k].push(v);
+          else g[k] = [v];
+        });
+        if (rollup) {
+          for (var k in g) {
+            g[k] = rollup(g[k]);
+          }
+        }
+        return g;
+      }
+      return subgroup(d, 0);
+    }
+
+    group.map = function(d) {
+      return group(d);
+    };
+
+    group.entries = function(d) {
+      return dtools.entries(group(d));
+    };
+
+    group.by = function(propOrProps) {
+      if (!arguments.length) return props;
+      if (!Array.isArray(propOrProps)) propOrProps = dtools.slice(arguments);
+      props = propOrProps.map(dtools.property.map);
+      return group;
+    };
+
+    group.rollup = function(stat) {
+      if (!arguments.length) return rollup;
+      rollup = dtools.stat(stat);
+      return group;
+    };
+
+    return group;
+  };
+
   // flatten an array, optionally preserving arrays for which `preserve`
   // returns truthy.
   dtools.flatten = function flatten(d, preserve, depth) {
