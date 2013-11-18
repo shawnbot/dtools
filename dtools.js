@@ -434,17 +434,20 @@
 
   // summarizing constructor
   dtools.summarize = function() {
-    var props = null,
-        identity = true,
-        stats = ["min", "max", "mean"];
+    var props = [],
+        stats = [],
+        identity = false,
+        singleProp = false,
+        singleStat = false;
 
     function summarize(data) {
       var summary = {};
       if (identity) {
         props = [dtools.identity];
       } else if (!props.length && data.length) {
-        props = Object.keys(data[0]);
+        props = Object.keys(data[0]).map(dtools.property.map);
       }
+
       props.forEach(function(prop) {
         var fk = dtools.name(prop),
             sum = summary[fk] = {},
@@ -456,44 +459,66 @@
           sum[sk] = stat(values);
         });
       });
-      return identity
+
+      var out = identity
         ? summary.identity
-        : summary;
+        : singleProp
+          ? dtools.first(summary)
+          : summary;
+      if (singleStat) {
+        for (var k in out) {
+          out[k] = dtools.first(out[k]);
+        }
+      }
+      return out;
     }
+
+    summarize.property = summarize.prop = function(prop) {
+      if (!arguments.length) return props[0];
+      props = [dtools.property(prop)];
+      identity = false;
+      singleProp = true;
+      return summarize;
+    };
 
     summarize.properties = summarize.props = function(list) {
       if (!arguments.length) return props;
       if (list) {
-        if (arguments.length > 1) list = dtools.slice(arguments);
-        props = list.map(function(prop) {
-          return dtools.property(prop);
-        });
+        props = list.map(dtools.property.map);
         identity = false;
+        singleProp = false;
       } else {
         identity = true;
         props = null;
+        singleProp = false;
       }
+      return summarize;
+    };
+
+    summarize.stat = function(stat) {
+      if (!arguments.length) return stats[0];
+      stats = [dtools.stat(stat)];
+      singleStat = true;
       return summarize;
     };
 
     summarize.stats = function(list) {
       if (!arguments.length) return stats;
-      if (arguments.length > 1) list = dtools.slice(arguments);
       if (Array.isArray(list)) {
-        stats = list.map(function(stat) {
-          return dtools.stat(stat);
-        });
+        stats = list.map(dtools.stat.map);
       } else if (typeof list === "object") {
         stats = Object.keys(list)
           .map(function(key) {
             var stat = list[key];
-            return dtools.rename(dtools.stat(list[key]), key);
+            return dtools.stat(list[key], key);
           });
       }
+      singleStat = false;
       return summarize;
     };
 
-    return summarize;
+    return summarize
+      .stats(["min", "max", "mean"]);
   };
 
   // coerce a stat name into a stat function or property
