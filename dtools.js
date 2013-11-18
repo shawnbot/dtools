@@ -327,11 +327,17 @@
 
   // summarizing constructor
   dtools.summarize = function() {
-    var props = [],
-        stats = [];
+    var props = null,
+        identity = true,
+        stats = ["min", "max", "mean"];
 
     function summarize(data) {
       var summary = {};
+      if (identity) {
+        props = [dtools.identity];
+      } else if (!props.length && data.length) {
+        props = Object.keys(data[0]);
+      }
       props.forEach(function(prop) {
         var fk = dtools.name(prop),
             sum = summary[fk] = {},
@@ -343,19 +349,29 @@
           sum[sk] = stat(values);
         });
       });
-      return summary;
+      return identity
+        ? summary.identity
+        : summary;
     }
 
     summarize.properties = summarize.props = function(list) {
       if (!arguments.length) return props;
-      props = list.map(function(prop) {
-        return dtools.property(prop);
-      });
+      if (list) {
+        if (arguments.length > 1) list = dtools.slice(arguments);
+        props = list.map(function(prop) {
+          return dtools.property(prop);
+        });
+        identity = false;
+      } else {
+        identity = true;
+        props = null;
+      }
       return summarize;
     };
 
     summarize.stats = function(list) {
       if (!arguments.length) return stats;
+      if (arguments.length > 1) list = dtools.slice(arguments);
       if (Array.isArray(list)) {
         stats = list.map(function(stat) {
           return dtools.stat(stat);
