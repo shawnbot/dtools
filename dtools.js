@@ -1,7 +1,7 @@
 (function() {
 
   var dtools = {
-    version: "0.3.5"
+    version: "0.4.0"
   };
 
   // TODO: use browserify to build the browser bundle?
@@ -97,6 +97,36 @@
     return copy;
   };
 
+  dtools.filter = function filter(d, filter) {
+    return Array.isArray(d)
+      ? d.filter(filter)
+      : dtools.filterObject(d, filter);
+  };
+
+  dtools.filterObject = function filterObject(d, filter) {
+    var out = {};
+    for (var k in d) {
+      if (filter(k, k[d])) out[k] = d[k];
+    }
+    return out;
+  };
+
+  dtools.filterValues = function filterValues(d, filter) {
+    var out = {};
+    for (var k in d) {
+      if (filter(k[d])) out[k] = d[k];
+    }
+    return out;
+  };
+
+  dtools.filterKeys = function filterKeys(d, filter) {
+    var out = {};
+    for (var k in d) {
+      if (filter(k)) out[k] = d[k];
+    }
+    return out;
+  };
+
   dtools.copy.properties = function copyProperties(obj, props, deep) {
     var copy = {};
     props.map(dtools.property).forEach(function(prop) {
@@ -135,14 +165,17 @@
     };
   };
 
+  // get an array of keys in an Object
   dtools.keys = Object.keys;
 
+  // get an array of values in an Object
   dtools.values = function values(d) {
     var values = [];
     for (var k in d) values.push(d[k]);
     return values;
   };
 
+  // get the entries of an Object in the form: [{key, value}, ...]
   dtools.entries = function entries(d) {
     var entries = [];
     for (var k in d) {
@@ -167,16 +200,53 @@
     return dict;
   };
 
+  // get all of the unique values in a set
   dtools.unique = function unique(d) {
     var values = [];
-    d.forEach(function(v) {
+    for (var i = 0; i < d.length; i++) {
+      var v = d[i];
       if (values.indexOf(v) === -1) {
         values.push(v);
       }
-    });
+    }
     return values;
   };
 
+  // get the number of unique values in a set
+  dtools.uniqueCount = function uniqueCount(d) {
+    return dtools.unique(d).length;
+  };
+
+  // get a summary of the most common `limit` values in a set,
+  // or just a dictionary of unique values in the form:
+  // {value: count, ...}
+  dtools.common = function common(d, limit) {
+    var entries = dtools.group()
+      .by(dtools.identity)
+      .rollup(dtools.length)
+      .entries(d)
+      .map(function(d) { return [d.key, d.value]; })
+      .sort(dtools.sort(1, dtools.descending));
+    return dtools.dict((limit > 0 && limit < entries.length)
+      ? entries.slice(0, limit)
+      : entries);
+  };
+
+  // get the shortest value (string or array length) in a set
+  dtools.shortest = function shortest(d) {
+    return dtools.min(d.map(function(x) {
+      return x.length;
+    }));
+  };
+
+  // get the longest value (string or array length) in a set
+  dtools.longest = function longest(d) {
+    return dtools.max(d.map(function(x) {
+      return x.length;
+    }));
+  };
+
+  // get the extent of a set in the form [min, max]
   dtools.extent = function extent(d) {
     var min = d[0],
         max = d[0];
@@ -312,8 +382,7 @@
         getter = (len > 1)
           ? function(d) {
               for (var i = 0; i < len; i++) {
-                var field = props[i];
-                d = d[field];
+                d = d[props[i]];
               }
               return d;
             }
@@ -510,8 +579,15 @@
 
     summarize.properties = summarize.props = function(list) {
       if (!arguments.length) return props;
-      if (list) {
+      if (Array.isArray(list)) {
         props = list.map(dtools.property.map);
+        identity = false;
+        singleProp = false;
+      } else if (typeof list === "object") {
+        props = dtools.entries(list)
+          .map(function(d, i) {
+            return dtools.property(d.key, d.value);
+          });
         identity = false;
         singleProp = false;
       } else {
@@ -534,10 +610,9 @@
       if (Array.isArray(list)) {
         stats = list.map(dtools.stat.map);
       } else if (typeof list === "object") {
-        stats = Object.keys(list)
-          .map(function(key) {
-            var stat = list[key];
-            return dtools.stat(list[key], key);
+        stats = dtools.entries(list)
+          .map(function(d) {
+            return dtools.stat(d.key, d.value);
           });
       }
       singleStat = false;
@@ -590,6 +665,20 @@
         }
       });
     };
+  };
+
+  dtools.zip = function zip(list) {
+    var out = [],
+        sources = dtools.slice(arguments),
+        slen = sources.length;
+    for (var i = 0, len = list.length; i < len; i++) {
+      var line = [];
+      for (var j = 0; j < slen; j++) {
+        line.push(sources[j][i]);
+      }
+      out.push(line);
+    }
+    return out;
   };
 
   /*
