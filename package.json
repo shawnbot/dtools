@@ -1,6 +1,6 @@
 {
   "name": "dtools",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "data tools",
   "main": "index.js",
   "scripts": {
