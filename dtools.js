@@ -234,16 +234,20 @@
 
   // get the shortest value (string or array length) in a set
   dtools.shortest = function shortest(d) {
-    return dtools.min(d.map(function(x) {
-      return x.length;
-    }));
+    var shortest = d[0];
+    for (var i = 1, len = d.length; i < len; i++) {
+      if (d[i].length < shortest.length) shortest = d[i];
+    }
+    return shortest;
   };
 
   // get the longest value (string or array length) in a set
   dtools.longest = function longest(d) {
-    return dtools.max(d.map(function(x) {
-      return x.length;
-    }));
+    var longest = d[0];
+    for (var i = 1, len = d.length; i < len; i++) {
+      if (d[i].length > longest.length) longest = d[i];
+    }
+    return longest;
   };
 
   // get the extent of a set in the form [min, max]
