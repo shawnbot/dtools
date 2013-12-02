@@ -10,20 +10,14 @@ module.exports = dtools;
 (function() {
 
   var dtools = {
-    version: "0.4.2"
+    version: "0.4.3"
   };
 
-  // TODO: use browserify to build the browser bundle?
-  if (typeof module === "object") {
-    module.exports = dtools;
-    var ss = require("simple-statistics");
-  } else {
-    this.dtools = dtools;
-    if (typeof ss !== "object") {
-      console.error("[dtools] no simple-statistics! sorry.");
-      return;
-    }
-  }
+  // export it
+  module.exports = dtools;
+
+  // bring in simple-statistics
+  var ss = require("simple-statistics");
 
   /*
    * the naming interface provides the ability to give custom names to
