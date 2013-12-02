@@ -1,9 +1,12 @@
 ;(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+dtools = require("./index");
+
+},{"./index":2}],2:[function(require,module,exports){
 var dtools = require("./lib/dtools");
 dtools.stream = require("./lib/stream");
 module.exports = dtools;
 
-},{"./lib/dtools":2,"./lib/stream":3}],2:[function(require,module,exports){
+},{"./lib/dtools":3,"./lib/stream":4}],3:[function(require,module,exports){
 (function() {
 
   var dtools = {
@@ -921,7 +924,7 @@ module.exports = dtools;
 
 })(this);
 
-},{"simple-statistics":4}],3:[function(require,module,exports){
+},{"simple-statistics":5}],4:[function(require,module,exports){
 var dstream = module.exports = {};
 
 dstream.min = function min() {
@@ -1077,7 +1080,7 @@ dstream.stddev = function stddev() {
   return stream;
 };
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 // # simple-statistics
 //
 // A simple, literate statistics system. The code below uses the
