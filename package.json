@@ -18,7 +18,7 @@
   "dependencies": {
     "simple-statistics": "~0.5.0",
     "minimist": "0.0.5",
-    "csv": "~0.3.6",
+    "csv": "~0.3.6"
   },
   "devDependencies": {
     "uglify-js": "~2.4.6",
